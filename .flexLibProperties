@@ -2,6 +2,14 @@
 <flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
   <includeClasses>
     <classEntry path="robotlegs.bender.extensions.Navigator.NavigatorExtension"/>
+    <classEntry path="robotlegs.bender.extensions.Navigator.events.NavigatorEvent"/>
+    <classEntry path="robotlegs.bender.extensions.Navigator.api.INavigator"/>
+    <classEntry path="robotlegs.bender.extensions.Navigator.impl.Navigator"/>
+    <classEntry path="robotlegs.bender.extensions.Navigator.api.INavigatorHistory"/>
+    <classEntry path="robotlegs.bender.extensions.Navigator.impl.NavigatorHistory"/>
+    <classEntry path="robotlegs.bender.extensions.Navigator.impl.transitions.TransitionCompleteDelegate"/>
+    <classEntry path="robotlegs.bender.extensions.Navigator.impl.transitions.TransitionStatus"/>
+    <classEntry path="robotlegs.bender.extensions.Navigator.impl.transitions.ValidationPreparedDelegate"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

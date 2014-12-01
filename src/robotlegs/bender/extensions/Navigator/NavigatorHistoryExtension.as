@@ -13,7 +13,7 @@ package robotlegs.bender.extensions.Navigator
 	import robotlegs.bender.framework.api.IExtension;
 	import robotlegs.bender.framework.api.IInjector;
 
-	public class NavigatorExtension implements IExtension
+	public class NavigatorHistoryExtension implements IExtension
 	{
 		/*============================================================================*/
 		/* Private Properties                                                         */
@@ -29,8 +29,9 @@ package robotlegs.bender.extensions.Navigator
 		{
 			context.whenDestroying(whenDestroying);
 			_injector = context.injector;
-			_injector.map(INavigator).toSingleton(Navigator);
-		}	
+			//_injector.map(INavigator).toSingleton(Navigator);
+		}
+		
 		
 		/*============================================================================*/
 		/* Private Functions                                                          */
@@ -40,7 +41,7 @@ package robotlegs.bender.extensions.Navigator
 		{
 			if (_injector.satisfiesDirectly(INavigator))
 			{
-				_injector.unmap(INavigator);
+				//_injector.unmap(INavigator);
 			}
 		}		
 		
