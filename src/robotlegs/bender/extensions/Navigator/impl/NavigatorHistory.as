@@ -1,9 +1,9 @@
-package robotlegs.bender.extensions.Navigator.impl
+package robotlegs.bender.extensions.navigator.impl
 {
-	import robotlegs.bender.extensions.Navigator.api.INavigator;
-	import robotlegs.bender.extensions.Navigator.api.INavigatorHistory;
-	import robotlegs.bender.extensions.Navigator.api.NavigationState;
-	import robotlegs.bender.extensions.Navigator.events.NavigatorEvent;
+	import robotlegs.bender.extensions.navigator.api.INavigator;
+	import robotlegs.bender.extensions.navigator.api.INavigatorHistory;
+	import robotlegs.bender.extensions.navigator.api.NavigationState;
+	import robotlegs.bender.extensions.navigator.events.NavigatorEvent;
 
 	public class NavigatorHistory implements INavigatorHistory {
 		// Default max history length

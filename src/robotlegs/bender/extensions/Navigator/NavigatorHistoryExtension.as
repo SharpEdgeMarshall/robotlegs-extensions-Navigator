@@ -5,10 +5,10 @@
 //  in accordance with the terms of the license agreement accompanying it.
 //------------------------------------------------------------------------------
 
-package robotlegs.bender.extensions.Navigator
+package robotlegs.bender.extensions.navigator
 {
-	import robotlegs.bender.extensions.Navigator.api.INavigator;
-	import robotlegs.bender.extensions.Navigator.impl.Navigator;
+	import robotlegs.bender.extensions.navigator.api.INavigatorHistory;
+	import robotlegs.bender.extensions.navigator.impl.NavigatorHistory;
 	import robotlegs.bender.framework.api.IContext;
 	import robotlegs.bender.framework.api.IExtension;
 	import robotlegs.bender.framework.api.IInjector;
@@ -29,7 +29,7 @@ package robotlegs.bender.extensions.Navigator
 		{
 			context.whenDestroying(whenDestroying);
 			_injector = context.injector;
-			//_injector.map(INavigator).toSingleton(Navigator);
+			_injector.map(INavigatorHistory).toSingleton(NavigatorHistory);
 		}
 		
 		
@@ -39,9 +39,9 @@ package robotlegs.bender.extensions.Navigator
 		
 		private function whenDestroying():void
 		{
-			if (_injector.satisfiesDirectly(INavigator))
+			if (_injector.satisfiesDirectly(INavigatorHistory))
 			{
-				//_injector.unmap(INavigator);
+				_injector.unmap(INavigatorHistory);
 			}
 		}		
 		

@@ -1,4 +1,4 @@
-package robotlegs.bender.extensions.Navigator.api
+package robotlegs.bender.extensions.navigator.api
 {
 	public interface INavigatorHistory
 	{
