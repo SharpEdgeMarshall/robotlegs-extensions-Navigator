@@ -1,4 +1,4 @@
-package robotlegs.bender.extensions.Navigator.impl.ns {
+package robotlegs.bender.extensions.navigator.impl.ns {
 	/**
 	 */
 	public namespace hidden;

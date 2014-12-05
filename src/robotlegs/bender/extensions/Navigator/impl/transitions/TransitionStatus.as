@@ -1,4 +1,4 @@
-package robotlegs.bender.extensions.Navigator.impl.transitions
+package robotlegs.bender.extensions.navigator.impl.transitions
 {
 
 	public class TransitionStatus {

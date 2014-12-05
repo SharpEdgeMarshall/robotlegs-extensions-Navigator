@@ -1,10 +1,10 @@
-package robotlegs.bender.extensions.Navigator.events
+package robotlegs.bender.extensions.navigator.events
 {
 	import flash.events.Event;
 	import flash.utils.Dictionary;
 	import flash.utils.getQualifiedClassName;
 	
-	import robotlegs.bender.extensions.Navigator.api.NavigationState;
+	import robotlegs.bender.extensions.navigator.api.NavigationState;
 	
 	public class NavigatorEvent extends Event
 	{

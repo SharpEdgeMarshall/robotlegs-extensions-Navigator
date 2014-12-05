@@ -1,5 +1,5 @@
-package robotlegs.bender.extensions.Navigator.behaviors {
-	import robotlegs.bender.extensions.Navigator.api.NavigationState;
+package robotlegs.bender.extensions.navigator.behaviors {
+	import robotlegs.bender.extensions.navigator.api.NavigationState;
 
 	/**
 	 * When you application does not have the knowledge over whether a state is valid instantly,

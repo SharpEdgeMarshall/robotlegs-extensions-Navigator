@@ -1,29 +1,29 @@
-package robotlegs.bender.extensions.Navigator.impl
+package robotlegs.bender.extensions.navigator.impl
 {
 	import flash.events.EventDispatcher;
 	import flash.utils.Dictionary;
 	
-	import robotlegs.bender.extensions.Navigator.api.INavigator;
-	import robotlegs.bender.extensions.Navigator.api.NavigationState;
-	import robotlegs.bender.extensions.Navigator.behaviors.IHasStateInitialization;
-	import robotlegs.bender.extensions.Navigator.behaviors.IHasStateRedirection;
-	import robotlegs.bender.extensions.Navigator.behaviors.IHasStateSwap;
-	import robotlegs.bender.extensions.Navigator.behaviors.IHasStateTransition;
-	import robotlegs.bender.extensions.Navigator.behaviors.IHasStateUpdate;
-	import robotlegs.bender.extensions.Navigator.behaviors.IHasStateValidation;
-	import robotlegs.bender.extensions.Navigator.behaviors.IHasStateValidationAsync;
-	import robotlegs.bender.extensions.Navigator.behaviors.IHasStateValidationOptional;
-	import robotlegs.bender.extensions.Navigator.behaviors.INavigationResponder;
-	import robotlegs.bender.extensions.Navigator.behaviors.NavigationBehaviors;
-	import robotlegs.bender.extensions.Navigator.events.NavigatorEvent;
-	import robotlegs.bender.extensions.Navigator.impl.ns.hidden;
-	import robotlegs.bender.extensions.Navigator.impl.ns.transition;
-	import robotlegs.bender.extensions.Navigator.impl.ns.validation;
+	import robotlegs.bender.extensions.navigator.api.INavigator;
+	import robotlegs.bender.extensions.navigator.api.NavigationState;
+	import robotlegs.bender.extensions.navigator.behaviors.IHasStateInitialization;
+	import robotlegs.bender.extensions.navigator.behaviors.IHasStateRedirection;
+	import robotlegs.bender.extensions.navigator.behaviors.IHasStateSwap;
+	import robotlegs.bender.extensions.navigator.behaviors.IHasStateTransition;
+	import robotlegs.bender.extensions.navigator.behaviors.IHasStateUpdate;
+	import robotlegs.bender.extensions.navigator.behaviors.IHasStateValidation;
+	import robotlegs.bender.extensions.navigator.behaviors.IHasStateValidationAsync;
+	import robotlegs.bender.extensions.navigator.behaviors.IHasStateValidationOptional;
+	import robotlegs.bender.extensions.navigator.behaviors.INavigationResponder;
+	import robotlegs.bender.extensions.navigator.behaviors.NavigationBehaviors;
+	import robotlegs.bender.extensions.navigator.events.NavigatorEvent;
+	import robotlegs.bender.extensions.navigator.impl.ns.hidden;
+	import robotlegs.bender.extensions.navigator.impl.ns.transition;
+	import robotlegs.bender.extensions.navigator.impl.ns.validation;
 	import robotlegs.bender.framework.api.IContext;
 	import robotlegs.bender.framework.api.ILogger;
-	import robotlegs.bender.extensions.Navigator.impl.transitions.TransitionCompleteDelegate;
-	import robotlegs.bender.extensions.Navigator.impl.transitions.TransitionStatus;
-	import robotlegs.bender.extensions.Navigator.impl.transitions.ValidationPreparedDelegate;
+	import robotlegs.bender.extensions.navigator.impl.transitions.TransitionCompleteDelegate;
+	import robotlegs.bender.extensions.navigator.impl.transitions.TransitionStatus;
+	import robotlegs.bender.extensions.navigator.impl.transitions.ValidationPreparedDelegate;
 	
 	/**	 
 	 * 
@@ -293,7 +293,7 @@ package robotlegs.bender.extensions.Navigator.impl
 				// FIXME: What do we do in the mean time, dispatch an event or sth?
 				_logger.info("waiting for async validation to complete");
 			} else if (startAsyncValidation && _asyncValidationOccurred) {
-				// any async prepration happened instantaneuously
+				// any async preparation happened instantaneuously
 			} else if (_inlineRedirection) {
 				request(_inlineRedirection);
 			} else if (_current) {
@@ -305,12 +305,9 @@ package robotlegs.bender.extensions.Navigator.impl
 				// wildcards in the requested state that didn't match the previous state. This,
 				// unfortunately means your application has a logic error. Go fix it!
 				throw new Error("Check wildcard masking: " + requested);
-			} else if (_defaultState) {
+			} else {
 				// If all else fails, we'll put up the default state.
 				grantRequest(_defaultState);
-			} else {
-				// If you don't provide a default state, at least make sure your first request makes sense!
-				throw new Error("First request is invalid: " + requested);
 			}
 		}
 		
@@ -400,7 +397,7 @@ package robotlegs.bender.extensions.Navigator.impl
 			_asyncValidated = false;
 			_previous = _current;
 			_current = state;
-			
+			//TODO Implement STATUS CHANGING
 			notifyStateChange(_current);
 			
 			flow::startTransition();
@@ -466,7 +463,7 @@ package robotlegs.bender.extensions.Navigator.impl
 			}
 			
 			if (allowAsyncValidation) {
-				// This conditional is only true if we enter the validation the first (synchronous) time.
+				// This condition is only true if we enter the validation the first (synchronous) time.
 				_asyncValidationOccurred = false;
 				_asyncInvalidated = false;
 				_asyncValidated = false;
@@ -573,7 +570,7 @@ package robotlegs.bender.extensions.Navigator.impl
 		private function validateImplicitly(state : NavigationState) : Boolean {
 			for (var path : String in _responders.showByPath) {
 				if (new NavigationState(path).equals(state)) {
-					// info("Validation passed based on transition responder.");
+					_logger.info("Validation passed based on transition responder.");
 					return true;
 				}
 			}
@@ -830,7 +827,7 @@ import flash.utils.Dictionary;
 import flash.utils.describeType;
 import flash.utils.getQualifiedClassName;
 
-import robotlegs.bender.extensions.Navigator.behaviors.INavigationResponder;
+import robotlegs.bender.extensions.navigator.behaviors.INavigationResponder;
 import robotlegs.bender.framework.api.IContext;
 import robotlegs.bender.framework.api.ILogger;
 

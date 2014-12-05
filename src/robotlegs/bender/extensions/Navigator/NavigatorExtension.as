@@ -1,14 +1,14 @@
 //------------------------------------------------------------------------------
-//  Copyright (c) 2012 the original author or authors. All Rights Reserved.
+//  Copyright (c) 2014 the original author or authors. All Rights Reserved.
 //
 //  NOTICE: You are permitted to use, modify, and distribute this file
 //  in accordance with the terms of the license agreement accompanying it.
 //------------------------------------------------------------------------------
 
-package robotlegs.bender.extensions.Navigator
+package robotlegs.bender.extensions.navigator
 {
-	import robotlegs.bender.extensions.Navigator.api.INavigator;
-	import robotlegs.bender.extensions.Navigator.impl.Navigator;
+	import robotlegs.bender.extensions.navigator.api.INavigator;
+	import robotlegs.bender.extensions.navigator.impl.Navigator;
 	import robotlegs.bender.framework.api.IContext;
 	import robotlegs.bender.framework.api.IExtension;
 	import robotlegs.bender.framework.api.IInjector;

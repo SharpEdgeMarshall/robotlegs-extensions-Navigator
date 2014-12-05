@@ -1,10 +1,10 @@
-package robotlegs.bender.extensions.Navigator.impl.transitions
+package robotlegs.bender.extensions.navigator.impl.transitions
 {
-	import robotlegs.bender.extensions.Navigator.api.NavigationState;
-	import robotlegs.bender.extensions.Navigator.behaviors.IHasStateValidation;
-	import robotlegs.bender.extensions.Navigator.behaviors.IHasStateValidationAsync;
-	import robotlegs.bender.extensions.Navigator.impl.ns.validation;
-	import robotlegs.bender.extensions.Navigator.impl.Navigator;
+	import robotlegs.bender.extensions.navigator.api.NavigationState;
+	import robotlegs.bender.extensions.navigator.behaviors.IHasStateValidation;
+	import robotlegs.bender.extensions.navigator.behaviors.IHasStateValidationAsync;
+	import robotlegs.bender.extensions.navigator.impl.ns.validation;
+	import robotlegs.bender.extensions.navigator.impl.Navigator;
 
 	public class ValidationPreparedDelegate {
 		private var _navigator : Navigator;

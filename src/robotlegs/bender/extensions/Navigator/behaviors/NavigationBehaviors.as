@@ -1,4 +1,4 @@
-package robotlegs.bender.extensions.Navigator.behaviors {
+package robotlegs.bender.extensions.navigator.behaviors {
 
 	public class NavigationBehaviors {
 		/**

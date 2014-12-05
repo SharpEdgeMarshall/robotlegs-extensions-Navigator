@@ -1,8 +1,8 @@
-package robotlegs.bender.extensions.Navigator.api
+package robotlegs.bender.extensions.navigator.api
 {
 	import flash.events.IEventDispatcher;
 	
-	import robotlegs.bender.extensions.Navigator.behaviors.INavigationResponder;
+	import robotlegs.bender.extensions.navigator.behaviors.INavigationResponder;
 
 	public interface INavigator extends IEventDispatcher
 	{
