@@ -5,25 +5,29 @@
 //  in accordance with the terms of the license agreement accompanying it. 
 //------------------------------------------------------------------------------
 
-package robotlegs.bender.extensions.navigator
+package robotlegs.bender.extensions.navigator.support
 {
-	import robotlegs.bender.extensions.navigator.impl.StateCommandMapTest;
 	
 
-	[RunWith("org.flexunit.runners.Suite")]
-	[Suite]
-	public class StateCommandMapExtensionTestSuite
-	{	
+	public class SupportState
+	{
 
 		/*============================================================================*/
-		/* Public Properties                                                          */
+		/* Public Static Properties                                                   */
 		/*============================================================================*/
 
-		public var eventCommandMapExtension:StateCommandMapExtensionTest;
+		public static const TYPE:String = '/';
 
-		public var stateCommandMap:StateCommandMapTest;
+		public static const TYPE1:String = '/1/';
+		
+		public static const TYPE11:String = '/1/1';
 
-		//public var eventCommandTrigger:EventCommandTriggerTest;
-
+		public static const TYPE2:String = '/2/';
+		
+		public static const TYPE2W:String = '/2/*';
+		
+		public static const TYPE21:String = '/2/1';
+		
+		public static const TYPE22:String = '/2/2';
 	}
 }
