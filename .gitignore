@@ -12,3 +12,7 @@ bin-release/
 .flexLibProperties
 
 
+.FlexUnitSettings/FlexUnitApplicationLastRun.xml
+.FlexUnitSettings/FlexUnitApplicationLastSelection.xml
+lib/
+src/FlexUnitApplication.as
