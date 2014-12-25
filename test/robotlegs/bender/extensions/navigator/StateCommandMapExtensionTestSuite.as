@@ -8,6 +8,7 @@
 package robotlegs.bender.extensions.navigator
 {
 	import robotlegs.bender.extensions.navigator.impl.StateCommandMapTest;
+	import robotlegs.bender.extensions.navigator.impl.StateCommandTriggerTest;
 	
 
 	[RunWith("org.flexunit.runners.Suite")]
@@ -23,7 +24,7 @@ package robotlegs.bender.extensions.navigator
 
 		public var stateCommandMap:StateCommandMapTest;
 
-		//public var eventCommandTrigger:EventCommandTriggerTest;
+		public var stateCommandTrigger:StateCommandTriggerTest;
 
 	}
 }

@@ -9,6 +9,7 @@ package robotlegs.bender.extensions.navigator.impl
 	import robotlegs.bender.extensions.commandCenter.impl.CommandMappingList;
 	import robotlegs.bender.extensions.navigator.api.INavigator;
 	import robotlegs.bender.extensions.navigator.api.NavigationState;
+	import robotlegs.bender.extensions.navigator.api.NavigationStatesCollection;
 	import robotlegs.bender.extensions.navigator.behaviors.IHasStateUpdate;
 	import robotlegs.bender.framework.api.IInjector;
 	import robotlegs.bender.framework.api.ILogger;
@@ -55,11 +56,12 @@ package robotlegs.bender.extensions.navigator.impl
 		
 		public function updateState( truncated:NavigationState, full:NavigationState ) : void {
 			
-			if( _exactMatch && !full.equals(_navState)) return;
+			if( _exactMatch && (!truncated || truncated.segments.length == 0) ) return;
 			
-			_executor.executeCommands(_mappings.getList(), new CommandPayload([truncated, full],
-																			[NavigationState, NavigationState],
-																			['truncated', 'full']));
+			_executor.executeCommands(_mappings.getList(), new CommandPayload(
+																[new NavigationStatesCollection(truncated, full)],
+																[NavigationStatesCollection]
+															));
 		}		
 		
 		/**

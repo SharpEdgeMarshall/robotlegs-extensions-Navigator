@@ -76,9 +76,9 @@ package robotlegs.bender.extensions.navigator.impl
 		/* Private Functions                                                          */
 		/*============================================================================*/
 		
-		private function getKey( navState:NavigationState ):String
+		private function getKey( navState:NavigationState, exactMatch:Boolean ):String
 		{
-			return navState.toString();
+			return navState.toString() + exactMatch;
 		}
 		
 		private function getTrigger( navState:NavigationState, exactMatch:Boolean = false  ):StateCommandTrigger
