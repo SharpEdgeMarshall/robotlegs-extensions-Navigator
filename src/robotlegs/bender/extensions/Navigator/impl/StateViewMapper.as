@@ -33,6 +33,8 @@ package robotlegs.bender.extensions.navigator.impl
 
 		private var _handler:ViewStateHandler;
 
+		private var _navigator:INavigator;
+		
 		private var _logger:ILogger;
 
 		/*============================================================================*/
@@ -47,6 +49,7 @@ package robotlegs.bender.extensions.navigator.impl
 			_state = state;
 			_handler = handler;
 			_logger = logger;
+			_navigator = navigator;
 		}
 
 		/*============================================================================*/
