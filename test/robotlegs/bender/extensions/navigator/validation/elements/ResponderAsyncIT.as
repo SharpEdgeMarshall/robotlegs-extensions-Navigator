@@ -33,7 +33,7 @@ package robotlegs.bender.extensions.navigator.validation.elements {
 
 		public function transitionIn(inCallOnComplete : Function) : void {
 			visible = true;
-			setTimeout(finishTransition, durationMS, [inCallOnComplete, transitionedIn]);
+			setTimeout(finishTransition, durationMS, inCallOnComplete, transitionedIn);
 		}
 
 		private function finishTransition(inCallOnComplete : Function, inSignalToDispatch:Signal) : void {
@@ -43,7 +43,7 @@ package robotlegs.bender.extensions.navigator.validation.elements {
 
 		public function transitionOut(inCallOnComplete : Function) : void {
 			visible = false;
-			setTimeout(finishTransition, durationMS, [inCallOnComplete, transitionedOut]);
+			setTimeout(finishTransition, durationMS, inCallOnComplete, transitionedOut);
 		}
 	}
 }

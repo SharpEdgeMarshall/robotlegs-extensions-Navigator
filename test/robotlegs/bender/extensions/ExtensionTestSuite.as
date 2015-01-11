@@ -7,6 +7,7 @@
 
 package robotlegs.bender.extensions
 {
+	import robotlegs.bender.extensions.navigator.NavigatorExtensionTestSuite;
 	import robotlegs.bender.extensions.navigator.StateCommandMapExtensionTestSuite;
 
 	[RunWith("org.flexunit.runners.Suite")]
@@ -18,7 +19,7 @@ package robotlegs.bender.extensions
 		/* Public Properties                                                          */
 		/*============================================================================*/
 
-
-		public var navigator:StateCommandMapExtensionTestSuite;
+		public var navigatorTest:NavigatorExtensionTestSuite;
+		public var statecommandTest:StateCommandMapExtensionTestSuite;
 	}
 }

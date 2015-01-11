@@ -95,7 +95,7 @@ package robotlegs.bender.extensions.navigator.responders {
 				text += responder + " --> " + TransitionStatus.toString(event.statusByResponder[responder]) + "\n";
 			}
 			
-			fail(text);
+			//fail(text);
 		}
 
 		private function thatAsyncRespondersAreStillGone() : void {
