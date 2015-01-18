@@ -1,5 +1,7 @@
 package robotlegs.bender.extensions.navigator.api
 {
+	import robotlegs.bender.extensions.navigator.impl.NSPool;
+
 	/**
 	 * 
 	 * The NavigationState is the most important part of the Navigator system.
@@ -13,11 +15,12 @@ package robotlegs.bender.extensions.navigator.api
 		public static const WILDCARD : String = "*";
 		public static const DOUBLE_WILDCARD : String = WILDCARD + WILDCARD;
 		public static const DELIMITER : String = "/";
+		
 		//
 		private var _path : String;
 		
 		public static function make(stateOrPath : *) : NavigationState {
-			return stateOrPath is NavigationState ? stateOrPath : new NavigationState(stateOrPath);
+			return stateOrPath is NavigationState ? stateOrPath : NSPool.getNavigationState(stateOrPath);
 		}
 		
 		/**
@@ -163,7 +166,7 @@ package robotlegs.bender.extensions.navigator.api
 			if (!contains(operand))
 				return null;
 			
-			var ns : NavigationState = new NavigationState();
+			var ns : NavigationState = NSPool.getNavigationState();
 			var subtract : Array = segments;
 			subtract.splice(0, operand.segments.length);
 			ns.segments = subtract;
@@ -171,17 +174,17 @@ package robotlegs.bender.extensions.navigator.api
 		}
 		
 		public function add(trailingStateOrPath : *) : NavigationState {
-			return new NavigationState(path, make(trailingStateOrPath).path);
+			return NSPool.getNavigationState(path, make(trailingStateOrPath).path);
 		}
 		
 		public function addSegments(...trailingSegments : Array) : NavigationState {
-			var trailingState : NavigationState = new NavigationState();
+			var trailingState : NavigationState = NSPool.getNavigationState();
 			trailingState.segments = trailingSegments;
 			return add(trailingState);
 		}
 		
 		public function prefix(leadingStateOrPath : *) : NavigationState {
-			return new NavigationState(make(leadingStateOrPath), path);
+			return NSPool.getNavigationState( make(leadingStateOrPath), path );
 		}
 		
 		public function hasWildcard() : Boolean {
@@ -204,13 +207,17 @@ package robotlegs.bender.extensions.navigator.api
 				}
 			}
 			
-			var masked : NavigationState = new NavigationState();
+			var masked : NavigationState = NSPool.getNavigationState();
 			masked.segments = unmaskedSegments;
 			return masked;
 		}
 		
+		public function dispose() : void {
+			NSPool.disposeNavigationState( this );
+		}
+		
 		public function clone() : NavigationState {
-			return new NavigationState(path);
+			return NSPool.getNavigationState( path );
 		}
 		
 		public function toString() : String {

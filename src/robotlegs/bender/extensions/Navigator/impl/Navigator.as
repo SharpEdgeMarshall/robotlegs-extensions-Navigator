@@ -15,15 +15,16 @@ package robotlegs.bender.extensions.navigator.impl
 	import robotlegs.bender.extensions.navigator.behaviors.IHasStateValidationOptional;
 	import robotlegs.bender.extensions.navigator.behaviors.INavigationResponder;
 	import robotlegs.bender.extensions.navigator.behaviors.NavigationBehaviors;
-	import robotlegs.bender.extensions.navigator.events.NavigatorEvent;
+	import robotlegs.bender.extensions.navigator.events.NavigatorStateEvent;
+	import robotlegs.bender.extensions.navigator.events.TransitionEvent;
 	import robotlegs.bender.extensions.navigator.impl.ns.hidden;
 	import robotlegs.bender.extensions.navigator.impl.ns.transition;
 	import robotlegs.bender.extensions.navigator.impl.ns.validation;
-	import robotlegs.bender.framework.api.IContext;
-	import robotlegs.bender.framework.api.ILogger;
 	import robotlegs.bender.extensions.navigator.impl.transitions.TransitionCompleteDelegate;
 	import robotlegs.bender.extensions.navigator.impl.transitions.TransitionStatus;
 	import robotlegs.bender.extensions.navigator.impl.transitions.ValidationPreparedDelegate;
+	import robotlegs.bender.framework.api.IContext;
+	import robotlegs.bender.framework.api.ILogger;
 	
 	/**	 
 	 * 
@@ -132,6 +133,10 @@ package robotlegs.bender.extensions.navigator.impl
 				requested = requested.mask(_current || _defaultState);
 			}
 			
+			// EVENT( STATE_REQUESTED ) This event makes it possible to add responders just in time to participate in the validation process.
+			var reqEvent : NavigatorStateEvent = new NavigatorStateEvent( NavigatorStateEvent.STATE_REQUESTED, _current, requested );
+			dispatchEvent(reqEvent);
+			
 			// Check for exact match of the requested and the current state
 			if (_current && _current.path == requested.path) {
 				_logger.info("Already at the requested state: " + requested);
@@ -139,21 +144,22 @@ package robotlegs.bender.extensions.navigator.impl
 			}
 			
 			if (_redirects) {
+				var from : NavigationState = NSPool.getNavigationState();
 				for (var path : String in _redirects) {
-					var from : NavigationState = new NavigationState(path);
+					from.path = path;
 					if (from.equals(requested)) {
 						var to : NavigationState = NavigationState(_redirects[path]);
 						_logger.info("Redirecting " + from + " to " + to);
+						//EVENT( STATE_REDIRECTING )
+						var redEvent : NavigatorStateEvent = new NavigatorStateEvent( NavigatorStateEvent.STATE_REDIRECTING, from, to );
+						dispatchEvent(redEvent);
+						
 						request(to);
+						
 						return;
 					}
 				}
-			}
-			
-			// this event makes it possible to add responders just in time to participate in the validation process.
-			var ne : NavigatorEvent = new NavigatorEvent(NavigatorEvent.STATE_REQUESTED);
-			ne.state = requested;
-			dispatchEvent(ne);
+			}	
 			
 			// Inline redirection is reset with every request call.
 			// It can be changed by a responder implementing the IHasStateRedirection interface.
@@ -177,19 +183,10 @@ package robotlegs.bender.extensions.navigator.impl
 			return _current.clone();
 		}
 		
-		/**
-		 * This method is currently not exposed through the INavigator interface, because you shouldn't rely on it too heavily.
-		 * Implement your behaviors correctly and you should be fine.
-		 */
-		public function get isTransitioning() : Boolean {
-			return _isTransitioning;
-		}
-		
-		private function modify(addition : Boolean, responder : INavigationResponder, pathsOrStates : *, behavior : String = null) : void {
-			if (relayModification(addition, responder, pathsOrStates, behavior)) return;
+		private function modify(addition : Boolean, responder : INavigationResponder, pathOrState : *, behavior : String = null) : void {
 			
 			// Using the path variable as dictionary key to break instance referencing.
-			var path : String = NavigationState.make(pathsOrStates).path;
+			var path : String = NavigationState.make(pathOrState).path;
 			var list : Array;
 			var matchingInterface : Class;
 			
@@ -245,19 +242,17 @@ package robotlegs.bender.extensions.navigator.impl
 					delete _responders.swappedBefore[responder];
 				}
 			}
-			
-			dispatchEvent(new NavigatorEvent(NavigatorEvent.TRANSITION_STATUS_UPDATED, _statusByResponder));
 		}
 		
-		private function relayModification(addition : Boolean, responder : INavigationResponder, pathsOrStates : *, behaviors : String = null) : Boolean {
+		private function relayModification(addition : Boolean, responder : INavigationResponder, pathsOrStates : *, behaviors : String = null) : void {
 			if (!responder)
-				throw new Error("add: responder is null");
+				throw new Error( ( addition ? "Add" : "Remove" ) + ": responder is null");
 			
 			if (pathsOrStates is Array) {
 				for each (var pathOrState : * in pathsOrStates) {
-					modify(addition, responder, pathOrState, behaviors);
+					relayModification(addition, responder, pathOrState, behaviors);
 				}
-				return true;
+				return;
 			}
 			
 			behaviors ||= NavigationBehaviors.AUTO;
@@ -269,10 +264,10 @@ package robotlegs.bender.extensions.navigator.impl
 						// ignore 'should implement xyz' errors
 					}
 				}
-				return true;
+				return;
 			}
 			
-			return false;
+			return;
 		}
 		
 		private function performRequestCascade(requested : NavigationState, startAsyncValidation : Boolean = true) : void {
@@ -316,10 +311,6 @@ package robotlegs.bender.extensions.navigator.impl
 		 * This will not happen in regular use, but brute-force testing reveals it. The result is elements being visible when they shouldn't and vice versa.
 		 */
 		transition function notifyComplete(responder : INavigationResponder, status : int, behavior : String) : void {
-			if (_statusByResponder[responder]) {
-				_statusByResponder[responder] = status;
-				dispatchEvent(new NavigatorEvent(NavigatorEvent.TRANSITION_STATUS_UPDATED, _statusByResponder));
-			}
 			
 			var asynch : AsynchResponders;
 			var method : Function;
@@ -374,24 +365,6 @@ package robotlegs.bender.extensions.navigator.impl
 			return _statusByResponder[responder];
 		}
 		
-		hidden function getKnownPaths() : Array {
-			var list : Object = {};
-			list[_defaultState.path] = true;
-			
-			var path : String;
-			for (path in _responders.showByPath) {
-				list[new NavigationState(path).path] = true;
-			}
-			
-			var known : Array = [];
-			for (path in list) {
-				known.push(path);
-			}
-			
-			known.sort();
-			return known;
-		}
-		
 		protected function grantRequest(state : NavigationState) : void {
 			_asyncInvalidated = false;
 			_asyncValidated = false;
@@ -408,8 +381,7 @@ package robotlegs.bender.extensions.navigator.impl
 			
 			// Do call the super.notifyStateChange() when overriding.
 			if (state != _previous) {
-				var ne : NavigatorEvent = new NavigatorEvent(NavigatorEvent.STATE_CHANGED, _statusByResponder);
-				ne.state = currentState;
+				var ne : NavigatorStateEvent = new NavigatorStateEvent( NavigatorStateEvent.STATE_CHANGED, _previous, _current );
 				dispatchEvent(ne);
 			}
 		}
@@ -476,9 +448,10 @@ package robotlegs.bender.extensions.navigator.impl
 			var invalidated : Boolean = false;
 			var validated : Boolean = false;
 			
+			// create a state object for comparison:
+			var state : NavigationState = NSPool.getNavigationState();
 			for (var path : String in _responders.validateByPath) {
-				// create a state object for comparison:
-				var state : NavigationState = new NavigationState(path);
+				state.path = path;
 				
 				if (unvalidatedState.contains(state)) {
 					var remainder : NavigationState = unvalidatedState.subtract(state);
@@ -545,6 +518,8 @@ package robotlegs.bender.extensions.navigator.impl
 				}
 			}
 			
+			state.dispose();
+			
 			if (_validating.isBusy()) {
 				// the request cascade will double check the asynch validators and act accordingly.
 				return false;
@@ -568,19 +543,22 @@ package robotlegs.bender.extensions.navigator.impl
 		
 		// Check hard wiring of states to transition responders in the show list.
 		private function validateImplicitly(state : NavigationState) : Boolean {
+			var tNS : NavigationState = NSPool.getNavigationState();
 			for (var path : String in _responders.showByPath) {
-				if (new NavigationState(path).equals(state)) {
+				tNS.path = path;
+				if (tNS.equals(state)) {
 					_logger.info("Validation passed based on transition responder.");
 					return true;
 				}
 			}
+			tNS.dispose();
 			
 			return false;
 		}
 		
 		flow function startTransition() : void {
 			_isTransitioning = true;
-			dispatchEvent(new NavigatorEvent(NavigatorEvent.TRANSITION_STARTED));
+			dispatchEvent(new TransitionEvent(TransitionEvent.TRANSITION_STARTED));
 			
 			_disappearing = new AsynchResponders( _context );
 			_disappearing.addResponders(flow::transitionOut());
@@ -621,11 +599,7 @@ package robotlegs.bender.extensions.navigator.impl
 				if (_statusByResponder[waitFor[i]] == TransitionStatus.HIDDEN) {
 					waitFor.splice(i, 1);
 				}
-			}
-			
-			if (waitFor.length) {
-				dispatchEvent(new NavigatorEvent(NavigatorEvent.TRANSITION_STATUS_UPDATED, _statusByResponder));
-			}
+			}			
 			
 			return waitFor;
 		}
@@ -633,10 +607,10 @@ package robotlegs.bender.extensions.navigator.impl
 		flow function performUpdates() : void {
 			_disappearing.reset();
 			
-			for (var path:String in _responders.updateByPath) {
-				// create a state object for comparison:
-				var state : NavigationState = new NavigationState(path);
-				
+			// create a state object for comparison:
+			var state : NavigationState = NSPool.getNavigationState( );
+			for (var path:String in _responders.updateByPath) {				
+				state.path = path;
 				if (_current.contains(state)) {
 					// the lookup path is contained by the new state.
 					var list : Array = _responders.updateByPath[path];
@@ -649,6 +623,7 @@ package robotlegs.bender.extensions.navigator.impl
 					}
 				}
 			}
+			state.dispose();
 			
 			flow::startTransitionIn();
 		}
@@ -689,10 +664,6 @@ package robotlegs.bender.extensions.navigator.impl
 				}
 			}
 			
-			if (waitFor.length) {
-				dispatchEvent(new NavigatorEvent(NavigatorEvent.TRANSITION_STATUS_UPDATED, _statusByResponder));
-			}
-			
 			return waitFor;
 		}
 		
@@ -710,10 +681,10 @@ package robotlegs.bender.extensions.navigator.impl
 			
 			var waitFor : Array = [];
 			
-			for (var path:String in _responders.swapByPath) {
-				// create a state object for comparison:
-				var state : NavigationState = new NavigationState(path);
-				
+			// create a state object for comparison:
+			var state : NavigationState = NSPool.getNavigationState( );
+			for (var path:String in _responders.swapByPath) {				
+				state.path = path;
 				if (_current.contains(state)) {
 					// the lookup path is contained by the new state.
 					var list : Array = _responders.swapByPath[path];
@@ -736,6 +707,7 @@ package robotlegs.bender.extensions.navigator.impl
 					}
 				}
 			}
+			state.dispose();
 			
 			// loop backwards so we can splice elements off the array while in the loop.
 			for (var i : int = waitFor.length;--i >= 0;) {
@@ -744,20 +716,15 @@ package robotlegs.bender.extensions.navigator.impl
 				}
 			}
 			
-			if (waitFor.length) {
-				dispatchEvent(new NavigatorEvent(NavigatorEvent.TRANSITION_STATUS_UPDATED, _statusByResponder));
-			}
-			
 			return waitFor;
 		}
 		
 		flow function swapIn() : void {
 			_swapping.reset();
-			
-			for (var path:String in _responders.swapByPath) {
-				// create a state object for comparison:
-				var state : NavigationState = new NavigationState(path);
-				
+			// create a state object for comparison:
+			var state : NavigationState = NSPool.getNavigationState( );
+			for (var path:String in _responders.swapByPath) {				
+				state.path = path;
 				if (_current.contains(state)) {
 					// the lookup path is contained by the new state.
 					var list : Array = _responders.swapByPath[path];
@@ -774,13 +741,14 @@ package robotlegs.bender.extensions.navigator.impl
 					}
 				}
 			}
+			state.dispose();
 			
 			flow::finishTransition();
 		}
 		
 		flow function finishTransition() : void {
 			_isTransitioning = false;
-			dispatchEvent(new NavigatorEvent(NavigatorEvent.TRANSITION_FINISHED));
+			dispatchEvent(new TransitionEvent(TransitionEvent.TRANSITION_FINISHED));
 		}
 		
 		private function getRespondersToShow() : Array {
@@ -810,12 +778,15 @@ package robotlegs.bender.extensions.navigator.impl
 		
 		private function getResponderList(list : Dictionary, state : NavigationState) : Array {
 			var responders : Array = [];
-			
+			// create a state object for comparison:
+			var tNS : NavigationState = NSPool.getNavigationState();
 			for (var path:String in list) {
-				if (state.contains(new NavigationState(path))) {
+				tNS.path = path;
+				if (state.contains(tNS)) {
 					responders = responders.concat(list[path]);
 				}
 			}
+			tNS.dispose();
 			
 			return responders;
 		}
@@ -882,7 +853,7 @@ class AsynchResponders {
 	}
 	
 	public function hasResponder(responder : INavigationResponder) : Boolean {
-		return responders.indexOf(responder) >= 0;
+		return responders.indexOf( responder ) >= 0;
 	}
 	
 	public function addResponder(responder : INavigationResponder) : void {

@@ -3,7 +3,7 @@ package robotlegs.bender.extensions.navigator.impl
 	import robotlegs.bender.extensions.navigator.api.INavigator;
 	import robotlegs.bender.extensions.navigator.api.INavigatorHistory;
 	import robotlegs.bender.extensions.navigator.api.NavigationState;
-	import robotlegs.bender.extensions.navigator.events.NavigatorEvent;
+	import robotlegs.bender.extensions.navigator.events.NavigatorEventOld;
 
 	public class NavigatorHistory implements INavigatorHistory {
 		// Default max history length
@@ -34,7 +34,7 @@ package robotlegs.bender.extensions.navigator.impl
 		 */
 		public function NavigatorHistory(navigator : INavigator) {
 			_navigator = navigator;
-			_navigator.addEventListener(NavigatorEvent.STATE_CHANGED, handleStateChange);
+			_navigator.addEventListener(NavigatorEventOld.STATE_CHANGED, handleStateChange);
 			_history = new Array();
 		}
 		
@@ -163,7 +163,7 @@ package robotlegs.bender.extensions.navigator.impl
 		/**
 		 * Check what to do with the new state
 		 */
-		private function handleStateChange(event : NavigatorEvent) : void {
+		private function handleStateChange(event : NavigatorEventOld) : void {
 			var state : NavigationState = event.state;
 			
 			switch (_navigationDirection) {
